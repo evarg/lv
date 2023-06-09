@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        Schema::create(
+            'documents',
+            function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('file_id')->constrained()
+                    ->onUpdate('cascade')->onDelete('cascade');
+                $table->timestamps();
+            }
+        );
     }
 
     /**

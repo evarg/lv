@@ -18,14 +18,11 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('latin_name');
                 $table->text('desc');
-                $table->foreignId('creator_id')
-                    ->references('id')->on('users')
+                $table->foreignId('creator_id')->references('id')->on('users')
                     ->onDelete('cascade')->onUpdate('cascade');
-                $table->foreignId('producer_id')
-                    ->references('id')->on('producers')
+                $table->foreignId('project_id')->constrained()
                     ->onDelete('cascade')->onUpdate('cascade');
-                $table->foreignId('project_id')
-                    ->references('id')->on('projects')
+                $table->foreignId('producer_id')->constrained()
                     ->onDelete('cascade')->onUpdate('cascade');
                 $table->timestamps();
             }

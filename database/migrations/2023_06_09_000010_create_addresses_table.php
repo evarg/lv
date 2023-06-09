@@ -17,8 +17,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('country_id')
                     ->references('id')->on('countries')
-                    ->onDelete('cascade')
-                    ->onUpdate('cascade');
+                    ->onDelete('cascade')->onUpdate('cascade');
                 $table->timestamps();
             }
         );

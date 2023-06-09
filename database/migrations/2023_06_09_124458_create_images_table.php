@@ -15,10 +15,8 @@ return new class extends Migration
             'images',
             function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('file_id')
-                    ->constrained()
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
+                $table->foreignId('file_id')->constrained()
+                    ->onUpdate('cascade')->onDelete('cascade');
                 $table->timestamps();
             }
         );

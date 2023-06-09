@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('file_packet', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('file_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('packet_id')->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
