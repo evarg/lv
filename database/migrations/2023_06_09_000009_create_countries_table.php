@@ -16,6 +16,9 @@ return new class extends Migration
             function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
+                $table->string('code_alpha_2', 2);
+                $table->string('code_alpha_3', 3);
+                $table->unsignedInteger('code_numeric');
                 $table->timestamps();
             }
         );

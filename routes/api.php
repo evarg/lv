@@ -23,3 +23,4 @@ Route::middleware('auth:sanctum')->get(
 
 
 Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
+Route::apiResource('countries', \App\Http\Controllers\CountryController::class);

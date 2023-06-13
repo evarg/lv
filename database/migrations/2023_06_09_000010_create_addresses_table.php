@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Enums\AddressType;
 
 return new class extends Migration
 {
@@ -18,6 +19,12 @@ return new class extends Migration
                 $table->foreignId('country_id')
                     ->references('id')->on('countries')
                     ->onDelete('cascade')->onUpdate('cascade');
+                $table->string('city')->nullable();
+                $table->string('street')->nullable();
+                $table->string('number')->nullable();
+                $table->string('zip_code')->nullable();
+                $table->text('notes')->nullable();
+                $table->integer('type')->default(AddressType::BASIC);
                 $table->timestamps();
             }
         );
