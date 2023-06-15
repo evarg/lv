@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Enums\AddressType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +22,7 @@ return new class extends Migration
                 $table->foreignId('address_id')
                     ->references('id')->on('addresses')
                     ->onDelete('cascade')->onUpdate('cascade');
-                $table->string('type');
+                $table->integer('type')->default(AddressType::BASIC);
                 $table->timestamps();
             }
         );
