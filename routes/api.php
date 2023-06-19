@@ -27,8 +27,10 @@ Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
 Route::apiResource('countries', \App\Http\Controllers\CountryController::class);
 Route::apiResource('numbers', \App\Http\Controllers\NumberController::class);
 
-Route::apiResource('users/{user}/numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
-Route::apiResource('users/{user}/addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
+//Route::apiResource('users/{user}/numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
+Route::apiResource('users.addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
+Route::apiResource('users.numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
+
 
 Route::get('testuncio', function (Request $response) {
     return __('auth.failed');
