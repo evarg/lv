@@ -11,12 +11,12 @@ class Address extends Model
 {
     use HasFactory;
 
-    public function country()
+    public function country() : BelongsTo
     {
         return $this->belongsTo(Country::class);
     }
 
-    public function users()
+    public function users() : BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }
