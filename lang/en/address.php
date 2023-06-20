@@ -15,6 +15,8 @@ return [
     |
     */
 
+    'deleted' => 'Adress was deleted.',
+
     'type_' . AddressType::BASIC => 'basic',
     'type_' . AddressType::HOME => 'home',
     'type_' . AddressType::BUSINESS => 'business',

@@ -16,7 +16,11 @@ class NumberController extends Controller
     public function index()
     {
         $numbers = Number::all();
+<<<<<<< HEAD
         return new JsonResponse($numbers, 200);
+=======
+        return new JsonResponse($numbers);
+>>>>>>> d0c2fa8 (crud cd)
     }
 
     /**
@@ -26,7 +30,10 @@ class NumberController extends Controller
     {
         $number = new Number($request->all());
         $number->save();
+<<<<<<< HEAD
 
+=======
+>>>>>>> d0c2fa8 (crud cd)
         return new JsonResponse($number);
     }
 
@@ -35,7 +42,10 @@ class NumberController extends Controller
      */
     public function show(Number $number)
     {
+<<<<<<< HEAD
         $number->load('user');
+=======
+>>>>>>> d0c2fa8 (crud cd)
         return new JsonResponse($number);
     }
 
@@ -55,6 +65,9 @@ class NumberController extends Controller
     public function destroy(Number $number)
     {
         $number->delete();
+<<<<<<< HEAD
         return new JsonResponse('Pomysnie usunieto');
+=======
+>>>>>>> d0c2fa8 (crud cd)
     }
 }

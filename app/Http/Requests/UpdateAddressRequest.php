@@ -11,7 +11,7 @@ class UpdateAddressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class UpdateAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'country_id' => 'required|exists:\App\Models\Country,id',
+            'city' => 'required|max:255',
+            'street' => 'required|max:255',
+            'zip_code' => 'required|max:255',
+            'notes' => 'max:65535',
+            'type' => 'numeric|min:0|max:255'
         ];
     }
 }

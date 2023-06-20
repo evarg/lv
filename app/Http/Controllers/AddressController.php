@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
+use Illuminate\Http\JsonResponse;
 
 class AddressController extends Controller
 {
@@ -13,15 +14,8 @@ class AddressController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $addresses = Address::all();
+        return new JsonResponse($addresses);
     }
 
     /**
@@ -29,7 +23,9 @@ class AddressController extends Controller
      */
     public function store(StoreAddressRequest $request)
     {
-        //
+        $address = new Address($request->all());
+        $address->save();
+        return new JsonResponse($address);
     }
 
     /**
@@ -37,15 +33,7 @@ class AddressController extends Controller
      */
     public function show(Address $address)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Address $address)
-    {
-        //
+        return new JsonResponse($address);
     }
 
     /**
@@ -53,7 +41,9 @@ class AddressController extends Controller
      */
     public function update(UpdateAddressRequest $request, Address $address)
     {
-        //
+        $address->fill($request->all());
+        $address->save();
+        return new JsonResponse($address);
     }
 
     /**
@@ -61,6 +51,7 @@ class AddressController extends Controller
      */
     public function destroy(Address $address)
     {
-        //
+        $address->delete();
+        return new JsonResponse(['message' => __('address.deleted')], 200);
     }
 }
