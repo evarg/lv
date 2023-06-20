@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreAddressRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,8 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'country_id' => 'required|exists:\App\Models\Country,id',
-            'city' => 'required|max:255',
-            'street' => 'required|max:255',
-            'zip_code' => 'required|max:255',
-            'notes' => 'max:65535',
-            'type' => 'numeric|min:0|max:255'
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $this->user->id
         ];
     }
 }
