@@ -13,5 +13,4 @@ class Document extends Model
     {
         return $this->hasOne(File::class);
     }
-
 }

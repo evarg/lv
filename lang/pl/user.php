@@ -15,13 +15,5 @@ return [
     |
     */
 
-    'deleted' => 'Adres został usunięty.',
-
-    'type_' . AddressType::BASIC => 'podstawowy',
-    'type_' . AddressType::HOME => 'dom',
-    'type_' . AddressType::BUSINESS => 'firma',
-    'type_' . AddressType::BILLING => 'rozliczenie',
-    'type_' . AddressType::SHIPPING => 'dostawa',
-    'type_' . AddressType::CONTRACT => 'kontrakt',
-    'type_' . AddressType::RECIPIENT => 'odbiorca',
+    'deleted' => 'Użytkownik został usunięty.',
 ];

@@ -15,7 +15,7 @@ class UserAddressController extends Controller
      */
     public function index(User $user)
     {
-        $addressess = $user->addresses();
+        $addressess = $user->addresses;
         return new JsonResponse($addressess);
     }
 
@@ -25,8 +25,9 @@ class UserAddressController extends Controller
     public function store(StoreAddressRequest $request, User $user)
     {
         $address = new Address($request->all());
-        $address->user()->associate($user);
         $address->save();
+
+        $address->users()->attach($user);
         return new JsonResponse($address, 201);
     }
 
@@ -35,8 +36,7 @@ class UserAddressController extends Controller
      */
     public function update(Request $request, User $user, Address $address)
     {
-        $address->user()->associate($user);
-        $address->save();
+        $address->users()->syncWithoutDetaching($user);
         return new JsonResponse($address, 201);
     }
 
@@ -45,8 +45,7 @@ class UserAddressController extends Controller
      */
     public function destroy(User $user, Address $address)
     {
-        $address->user()->dissociate($address);
-        $address->save();
-        return new JsonResponse($address);
+        $user->addresses()->detach($address);
+        return new JsonResponse($user->addresses);
     }
 }
