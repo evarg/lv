@@ -2,6 +2,7 @@
 
 use App\Models\Enums\TelephoneNumberType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +23,6 @@ Route::middleware('auth:sanctum')->get(
     }
 );
 
-
 Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
 Route::apiResource('countries', \App\Http\Controllers\CountryController::class);
 Route::apiResource('numbers', \App\Http\Controllers\NumberController::class);
@@ -31,6 +31,7 @@ Route::apiResource('users', \App\Http\Controllers\UserController::class);
 Route::apiResource('users/{user}/numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
 Route::apiResource('users/{user}/addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
 
+<<<<<<< HEAD
 //Route::apiResource('profile', \App\Http\Controllers\NumberController::class)->only(['show', 'update', 'destroy']);
 
 Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
@@ -40,4 +41,16 @@ Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destr
 Route::get('testuncio', function (Request $response) {
     return __('auth.failed');
     return __('telephone_number.type_' . TelephoneNumberType::DEFAULT);
+=======
+Route::middleware('auth:api')->group(function(){
+    Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+>>>>>>> 95a793d183348e27f07c0036792bde66533b9378
 });
+
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
+
+Route::get('testuncio', function (Request $response) {
+    return Auth::user();
+})->middleware('auth:api');;
