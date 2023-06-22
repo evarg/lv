@@ -16,5 +16,6 @@ return [
     'failed' => 'Te dane uwierzytelniające nie pasują do naszych danych.',
     'password' => 'Podane hasło jest nieprawidłowe.',
     'throttle' => 'Za dużo nieudanych prób logowania. Proszę spróbować za :seconds sekund.',
-
+    'register' => 'Użytkownik został zarejestrowany.',
+    'logout' => 'Użytkownik został wylogowany',
 ];

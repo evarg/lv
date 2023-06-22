@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function store(LoginRequest $request)
     {
         $data = $request->validate([
             'email' => 'email|required',
@@ -14,12 +18,19 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return response(['error_message' => 'Incorrect Details. 
-            Please try again']);
+            return new JsonResponse(['message' => __('auth.failed')]);
         }
 
         $token = auth()->user()->createToken('API Token')->accessToken;
 
-        return response(['user' => auth()->user(), 'token' => $token]);
+        return response(['user' => auth()->user(), 'token' => $token], 200);
     }
+
+    public function destroy()
+    {
+        $user = Auth::user()->token();
+        $user->revoke();
+        return new JsonResponse(['message' => __('auth.logout')], 201);
+    }
+
 }

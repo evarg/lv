@@ -23,33 +23,26 @@ Route::middleware('auth:sanctum')->get(
     }
 );
 
-Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
-Route::apiResource('countries', \App\Http\Controllers\CountryController::class);
-Route::apiResource('numbers', \App\Http\Controllers\NumberController::class);
 
-Route::apiResource('users', \App\Http\Controllers\UserController::class);
-Route::apiResource('users/{user}/numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
-Route::apiResource('users/{user}/addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
-
-<<<<<<< HEAD
-//Route::apiResource('profile', \App\Http\Controllers\NumberController::class)->only(['show', 'update', 'destroy']);
-
-Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
-
-Route::get('testuncio', function (Request $response) {
-    return __('auth.failed');
-    return __('telephone_number.type_' . TelephoneNumberType::DEFAULT);
-=======
 Route::middleware('auth:api')->group(function(){
+    Route::delete('/auth', [\App\Http\Controllers\AuthController::class, 'destroy'])->name('logout')->middleware('auth:api');
+
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
->>>>>>> 95a793d183348e27f07c0036792bde66533b9378
+
+    Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
+    Route::apiResource('countries', \App\Http\Controllers\CountryController::class);
+    Route::apiResource('numbers', \App\Http\Controllers\NumberController::class);
+
+    Route::apiResource('users', \App\Http\Controllers\UserController::class);
+    Route::apiResource('users/{user}/numbers', \App\Http\Controllers\UserNumberController::class)->except(['show']);
+    Route::apiResource('users/{user}/addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
 });
 
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login'])->name('login');
+Route::post('/auth', [\App\Http\Controllers\AuthController::class, 'store'])->name('login');
+Route::post('/register', [\App\Http\Controllers\RegisterController::class, 'store'])->name('register.store');
+Route::post('/forgot-password', [\App\Http\Controllers\RegisterController::class, 'index'])->name('forgot-password');
 
 Route::get('testuncio', function (Request $response) {
     return Auth::user();

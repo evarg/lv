@@ -33,6 +33,7 @@ class AddressController extends Controller
      */
     public function show(Address $address)
     {
+        $address->load('country');
         return new JsonResponse($address);
     }
 
