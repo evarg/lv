@@ -38,6 +38,7 @@ class UserController extends Controller
     {
         $user->load('numbers');
         $user->load('addresses');
+        $user->load('producers');
         return new JsonResponse($user);
     }
 

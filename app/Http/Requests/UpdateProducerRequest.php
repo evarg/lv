@@ -11,7 +11,7 @@ class UpdateProducerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateProducerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|min:2|max:255',
+            'desc' => 'max:65535',
         ];
     }
 }

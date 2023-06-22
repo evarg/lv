@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Image;
 use App\Http\Requests\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ImageController extends Controller
 {
@@ -13,23 +15,20 @@ class ImageController extends Controller
      */
     public function index()
     {
-        //
+        $images = Image::all();
+        return new JsonResponse($images);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+    
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreImageRequest $request)
     {
-        //
+        $user = Auth::user();
+        $image = new Image($request->all());
+        $image->creator()->associate($user);
+        $image->save();
+        return new JsonResponse($image, 201);
     }
 
     /**
@@ -37,15 +36,8 @@ class ImageController extends Controller
      */
     public function show(Image $image)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Image $image)
-    {
-        //
+        $image->load('creator');
+        return new JsonResponse($image);
     }
 
     /**
@@ -53,7 +45,9 @@ class ImageController extends Controller
      */
     public function update(UpdateImageRequest $request, Image $image)
     {
-        //
+        $image->fill($request->all());
+        $image->save();
+        return new JsonResponse($image);
     }
 
     /**
@@ -61,6 +55,7 @@ class ImageController extends Controller
      */
     public function destroy(Image $image)
     {
-        //
+        $image->delete();
+        return new JsonResponse(['message' => __('image.deleted')], 200);
     }
 }

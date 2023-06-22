@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreFileRequest extends FormRequest
+class StoreAuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,8 @@ class StoreFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|max:2048',
+            'email' => 'required|email',
+            'password' => 'required|min:4|max:100'
         ];
     }
 }

@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Number::class);
     }
+
+    public function producers(): HasMany
+    {
+        return $this->hasMany(Producer::class, 'creator_id');
+    }
 }

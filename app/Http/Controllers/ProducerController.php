@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Producer;
 use App\Http\Requests\StoreProducerRequest;
 use App\Http\Requests\UpdateProducerRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ProducerController extends Controller
 {
@@ -13,23 +15,20 @@ class ProducerController extends Controller
      */
     public function index()
     {
-        //
+        $producers = Producer::all();
+        return new JsonResponse($producers);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+    
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreProducerRequest $request)
     {
-        //
+        $user = Auth::user();
+        $producer = new Producer($request->all());
+        $producer->creator()->associate($user);
+        $producer->save();
+        return new JsonResponse($producer, 201);
     }
 
     /**
@@ -37,15 +36,8 @@ class ProducerController extends Controller
      */
     public function show(Producer $producer)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Producer $producer)
-    {
-        //
+        $producer->load('creator');
+        return new JsonResponse($producer);
     }
 
     /**
@@ -53,7 +45,9 @@ class ProducerController extends Controller
      */
     public function update(UpdateProducerRequest $request, Producer $producer)
     {
-        //
+        $producer->fill($request->all());
+        $producer->save();
+        return new JsonResponse($producer);
     }
 
     /**
@@ -61,6 +55,7 @@ class ProducerController extends Controller
      */
     public function destroy(Producer $producer)
     {
-        //
+        $producer->delete();
+        return new JsonResponse(['message' => __('producer.deleted')], 200);
     }
 }

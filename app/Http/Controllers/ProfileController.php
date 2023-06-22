@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAuthRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -37,21 +38,15 @@ class ProfileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function destroy(StoreAuthRequest $request)
     {
-      
-        $data = $request->validate([
-            'email' => 'email|required',
-            'password' => 'required'
-        ]);
-
         $user = Auth::user();
 
-        if (Hash::check($request->password, $user->password)) {
-            return new JsonResponse(['error_message' => 'Incorrect Details. Please try again']);
+        if (!Hash::check($request->password, $user->password)) {
+            return new JsonResponse(['error_message' => 'Incorrect Details. Please try again'], 401);
         }
 
-        //$user->delete();
-        return new JsonResponse(['error_message' => 'Konto zostało usunięte.']);
+        $user->delete();
+        return new JsonResponse(['error_message' => 'Konto zostało usunięte.'], 200);
     }
 }
