@@ -6,6 +6,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
@@ -14,6 +15,7 @@ class ProfileController extends Controller
      */
     public function show()
     {
+        $user = Auth::user();
         $user->load('addresses');
         $user->load('numbers');
         return new JsonResponse($user);
@@ -24,6 +26,7 @@ class ProfileController extends Controller
      */
     public function update(UpdateProfileRequest $request)
     {
+        $user = Auth::user();
         $user->name = $request->get('name');
         $user->email = $request->get('email');
         $user->save();
@@ -33,8 +36,21 @@ class ProfileController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy()
+    public function destroy(Request $request)
     {
-        $user->delete();
+        $data = $request->validate([
+            'email' => 'email|required',
+            'password' => 'required'
+        ]);
+
+return auth()->check($data);
+
+        if (!auth()->check($data)) {
+            return new JsonResponse(['error_message' => 'Incorrect Details. Please try again']);
+        }
+
+        $user = Auth::user();
+        //$user->delete();
+        return new JsonResponse(['error_message' => 'Konto zostało usunięte.']);
     }
 }
