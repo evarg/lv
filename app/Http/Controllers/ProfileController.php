@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -38,18 +39,18 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request)
     {
+      
         $data = $request->validate([
             'email' => 'email|required',
             'password' => 'required'
         ]);
 
-return auth()->check($data);
+        $user = Auth::user();
 
-        if (!auth()->check($data)) {
+        if (Hash::check($request->password, $user->password)) {
             return new JsonResponse(['error_message' => 'Incorrect Details. Please try again']);
         }
 
-        $user = Auth::user();
         //$user->delete();
         return new JsonResponse(['error_message' => 'Konto zostało usunięte.']);
     }
