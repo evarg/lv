@@ -9,8 +9,9 @@ class File extends Model
 {
     use HasFactory;
 
-    public function document()
+    public function creator()
     {
-        return $this->belongsTo(Document::class);
+        return $this->belongsTo(User::class);
     }
+
 }

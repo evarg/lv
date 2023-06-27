@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use App\Http\Requests\StoreImageRequest;
+use App\Http\Requests\Image\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
+use App\Models\File;
+use App\Models\Image;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ImageController extends Controller
 {
@@ -18,16 +20,29 @@ class ImageController extends Controller
         $images = Image::all();
         return new JsonResponse($images);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreImageRequest $request)
     {
-        $user = Auth::user();
-        $image = new Image($request->all());
-        $image->creator()->associate($user);
+        $fileUpload = $request->file('file');
+
+        $file = new File();
+        $fileName = Str::uuid() . "." . $fileUpload->extension();
+        $filePath = $fileUpload->storeAs('uploads', $fileName, 'public');
+        $file->name = "";
+        $file->orginal_name = time() . '_' . $fileUpload->getClientOriginalName();
+        $file->size = $fileUpload->getSize();
+        $file->mime_type = $fileUpload->getClientMimeType();
+        $file->hash_name = '/storage/' . $filePath;
+        $file->creator()->associate(Auth::user());
+        $file->save();
+
+        $image = new Image();
+        $image->file()->associate($file);
         $image->save();
+
         return new JsonResponse($image, 201);
     }
 
