@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Image;
+namespace App\Http\Requests\Country;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreImageRequest extends FormRequest
+class CountryUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,10 @@ class StoreImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|max:2048',
+            'name' => 'required|min:2|max:255',
+            'code_alpha_2' => 'required|size:2',
+            'code_alpha_3' => 'required|size:3',
+            'code_numeric' => 'required|min:1|max:1000',
         ];
     }
 }

@@ -12,7 +12,7 @@ class Address extends Model
     use HasFactory;
 
     protected $fillable = [
-        'country_id', 'city', 'street', 'zip_code', 'type', 'notes'
+        'country_id', 'city', 'street', 'number', 'zip_code', 'notes', 'type'
     ];
 
     public function country(): BelongsTo

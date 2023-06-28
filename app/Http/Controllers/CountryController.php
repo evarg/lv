@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
-use App\Http\Requests\StoreCountryRequest;
-use App\Http\Requests\UpdateCountryRequest;
+use App\Http\Requests\Country\CountryStoreRequest;
+use App\Http\Requests\Country\CountryUpdateRequest;
 use Illuminate\Http\JsonResponse;
 
 class CountryController extends Controller
@@ -19,16 +19,6 @@ class CountryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCountryRequest $request)
-    {
-        $country = new Country($request->all());
-        $country->save();
-        return new JsonResponse($country);
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(Country $country)
@@ -38,13 +28,23 @@ class CountryController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function store(CountryStoreRequest $request)
+    {
+        $country = new Country($request->all());
+        $country->save();
+        return new JsonResponse($country, 201);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCountryRequest $request, Country $country)
+    public function update(CountryUpdateRequest $request, Country $country)
     {
         $country->fill($request->all());
         $country->save();
-        return new JsonResponse($country);
+        return new JsonResponse($country, 200);
     }
 
     /**
@@ -52,6 +52,6 @@ class CountryController extends Controller
      */
     public function destroy(Country $country)
     {
-        $country->delete();
+        $country->delete([], 204);
     }
 }

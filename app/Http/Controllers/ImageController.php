@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Image\StoreImageRequest;
-use App\Http\Requests\UpdateImageRequest;
+use App\Http\Requests\Image\ImageStoreRequest;
+use App\Http\Requests\Image\ImageUpdateRequest;
 use App\Models\File;
 use App\Models\Image;
+use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -22,22 +23,20 @@ class ImageController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(Image $image)
+    {
+        $image->load('creator');
+        return new JsonResponse($image, 200);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreImageRequest $request)
+    public function store(ImageStoreRequest $request, FileService $fileService)
     {
-        $fileUpload = $request->file('file');
-
-        $file = new File();
-        $fileName = Str::uuid() . "." . $fileUpload->extension();
-        $filePath = $fileUpload->storeAs('uploads', $fileName, 'public');
-        $file->name = "";
-        $file->orginal_name = time() . '_' . $fileUpload->getClientOriginalName();
-        $file->size = $fileUpload->getSize();
-        $file->mime_type = $fileUpload->getClientMimeType();
-        $file->hash_name = '/storage/' . $filePath;
-        $file->creator()->associate(Auth::user());
-        $file->save();
+        $file = $fileService->store($request);
 
         $image = new Image();
         $image->file()->associate($file);
@@ -47,22 +46,11 @@ class ImageController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Image $image)
-    {
-        $image->load('creator');
-        return new JsonResponse($image);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateImageRequest $request, Image $image)
+    public function update(ImageUpdateRequest $request, Image $image)
     {
-        $image->fill($request->all());
-        $image->save();
-        return new JsonResponse($image);
+        return new JsonResponse(['r' => $request]);
     }
 
     /**

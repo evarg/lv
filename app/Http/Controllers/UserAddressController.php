@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreAddressRequest;
+use App\Http\Requests\Address\AddressStoreRequest;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -16,19 +16,19 @@ class UserAddressController extends Controller
     public function index(User $user)
     {
         $addressess = $user->addresses;
-        return new JsonResponse($addressess);
+        return new JsonResponse($addressess, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAddressRequest $request, User $user)
+    public function store(AddressStoreRequest $request, User $user)
     {
         $address = new Address($request->all());
         $address->save();
-
         $address->users()->attach($user);
-        return new JsonResponse($address, 201);
+
+        return new JsonResponse([], 204);
     }
 
     /**
@@ -37,7 +37,7 @@ class UserAddressController extends Controller
     public function update(Request $request, User $user, Address $address)
     {
         $address->users()->syncWithoutDetaching($user);
-        return new JsonResponse($address, 201);
+        return new JsonResponse([], 204);
     }
 
     /**
@@ -46,6 +46,6 @@ class UserAddressController extends Controller
     public function destroy(User $user, Address $address)
     {
         $user->addresses()->detach($address);
-        return new JsonResponse($user->addresses);
+        return new JsonResponse([], 204);
     }
 }
