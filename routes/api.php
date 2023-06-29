@@ -30,6 +30,8 @@ Route::middleware('auth:api')->group(function(){
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::apiResource('profile/addresses', \App\Http\Controllers\ProfileAddressController::class)->except(['show']);
+    Route::apiResource('profile/numbers', \App\Http\Controllers\ProfileNumberController::class)->except(['show']);
 
     Route::apiResource('addresses', \App\Http\Controllers\AddressController::class);
     Route::apiResource('countries', \App\Http\Controllers\CountryController::class);
