@@ -43,7 +43,7 @@ Route::middleware('auth:api')->group(function(){
     Route::apiResource('users/{user}/addresses', \App\Http\Controllers\UserAddressController::class)->except(['show']);
 
     Route::apiResource('files', \App\Http\Controllers\FileController::class);
-    Route::apiResource('images', \App\Http\Controllers\ImageController::class);
+    Route::apiResource('pictures', \App\Http\Controllers\PictureController::class);
 });
 
 

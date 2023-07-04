@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
-use App\Http\Requests\StoreFileRequest;
-use App\Http\Requests\UpdateFileRequest;
+use App\Http\Requests\File\FileStoreRequest;
+use App\Http\Requests\File\FileUpdateRequest;
+use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FileController extends Controller
@@ -21,33 +23,6 @@ class FileController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreFileRequest $request)
-    {
-        $fileModel = new File;
-        $file = $request->file('file');
-        if ($request->file()) {
-            $fileName = Str::uuid() . "." . $file->extension();
-            $filePath = $request->file('file')->storeAs('uploads', $fileName, 'public');
-            $fileModel->name = "rs";
-            $fileModel->orginal_name = time() . '_' . $request->file->getClientOriginalName();
-            $fileModel->size = $file->getSize();
-            $fileModel->mime_type = $request->file->getClientMimeType();
-            $fileModel->hash_name = '/storage/' . $filePath;
-            $fileModel->creator_id = 1;
-            $fileModel->save();
-            return new JsonResponse($fileModel, 201);
-        }
-
-        $user = Auth::user();
-        $file = new File($request->all());
-        $file->creator()->associate($user);
-        $file->save();
-        return new JsonResponse($file, 201);
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(File $file)
@@ -57,21 +32,30 @@ class FileController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function store(FileStoreRequest $request, FileService $fileService)
+    {
+        $file = $fileService->store($request);
+        return new JsonResponse($file, 201);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFileRequest $request, File $file)
+    public function update(FileUpdateRequest $request, File $file, FileService $fileService) : JsonResponse
     {
-        $file->fill($request->all());
-        $file->save();
+        $file = $fileService->update($file, $request);
         return new JsonResponse($file);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(File $file)
+    public function destroy(File $file, FileService $fileService)
     {
-        $file->delete();
-        return new JsonResponse(['message' => __('file.deleted')], 200);
+        $fileService->delete($file);
+        Storage::delete($file->hash_name);
+        return new JsonResponse([], 204);
     }
 }

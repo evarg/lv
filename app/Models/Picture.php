@@ -5,21 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class File extends Model
+class Picture extends Model
 {
     use HasFactory;
 
-    protected $attributes = [
-        'name' => 'Plik',
-    ];
+    protected $table = 'pictures';
 
-    protected $fillable = [
-        'name'
-    ];
+    protected $fillable = ['name', 'desc'];
 
     public function creator()
     {
         return $this->belongsTo(User::class);
     }
-
 }

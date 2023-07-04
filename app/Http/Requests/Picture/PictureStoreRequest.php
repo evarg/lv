@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Picture;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreFileRequest extends FormRequest
+class PictureStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,9 @@ class StoreFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|max:2048',
+            'picture' => 'required|image|mimes:png,jpg,jpeg|max:20480',
+            'name' => 'max:255',
+            'desc' => 'max:65535'
         ];
     }
 }
