@@ -22,7 +22,7 @@ class PictureStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'picture' => 'required|image|mimes:png,jpg,jpeg|max:20480',
+            'picture' => 'required|image|mimes:jpg,jpeg|max:20480',
             'name' => 'max:255',
             'desc' => 'max:65535'
         ];
