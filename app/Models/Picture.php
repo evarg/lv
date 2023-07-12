@@ -20,28 +20,21 @@ class Picture extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getFileName($pictureSize = PictureSize::SIZE_ORG)
+    public function getPattern($withPath = true)
     {
         $pattern = Storage::disk('public')->path('images\\' . $this->hash_name . '%s.jpg');
-        switch ($pictureSize) {
-            case PictureSize::SIZE_ORG:
-                return sprintf($pattern,'_org');
-            case PictureSize::SIZE_RX:
-                return sprintf($pattern, '_rx');
-            case PictureSize::SIZE_RL:
-                return sprintf($pattern, '_rl');
-            case PictureSize::SIZE_RM:
-                return sprintf($pattern, '_rm');
-            case PictureSize::SIZE_RS:
-                return sprintf($pattern, '_rs');
-            case PictureSize::SIZE_SX:
-                return sprintf($pattern, '_sx');
-            case PictureSize::SIZE_SL:
-                return sprintf($pattern, '_sl');
-            case PictureSize::SIZE_SM:
-                return sprintf($pattern, '_sm');
-            case PictureSize::SIZE_SS:
-                return sprintf($pattern, '_ss');
-        }
+
+        return $pattern;
     }
+
+    public function getFileNameBySizeEnum($pictureSize = PictureSize::SIZE_ORG)
+    {
+        return sprintf($this->getPattern(), config('picture.thumbs'.$pictureSize.'suffix'));
+    }
+
+    public function getFileNameBySuffix(string $fileNameSuffix)
+    {
+        return sprintf($this->getPattern(), $fileNameSuffix);
+    }
+
 }

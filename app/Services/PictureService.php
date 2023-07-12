@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Enums\PictureSize;
 use App\Models\File;
 use App\Models\Picture;
+use App\Models\Thumbnail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,13 @@ class PictureService
     public function __construct()
     {
         $this->user = Auth::user();
+    }
+
+    public function createAndStoreThumbnails()
+    {
+        foreach (config('packet.thumbs') as $thumbConfig) {
+            var_dump($thumbConfig);
+        }
     }
 
     public function store(Request $request): Picture
@@ -38,33 +46,30 @@ class PictureService
         $picture->creator()->associate(Auth::user());
         $picture->save();
 
-        Storage::move($fileName, $picture->getFileName());
+        var_dump($fileName);
+        var_dump($picture->getFileNameBySizeEnum());
+
+        //Debugbar::error('Error!');
+
+        Storage::move($fileName, $picture->getFileNameBySizeEnum());
 
         $image = ImageManager::make(Storage::disk('local')->path($fileName));
 
-        $image->resize(1600, 1200, function ($constraint) {
-            $constraint->upsize();
-        });
-        $image->save($picture->getFileName(PictureSize::SIZE_RX));
-        $image->resizeCanvas(1200, 1200, 'center');
-        $image->save($picture->getFileName(PictureSize::SIZE_SX));
-
-        $image->resize(800, 600);
-        $image->save($picture->getFileName(PictureSize::SIZE_RL));
-        $image->resizeCanvas(600, 600, 'center');
-        $image->save($picture->getFileName(PictureSize::SIZE_SL));
-
-        $image->resize(400, 300);
-        $image->save($picture->getFileName(PictureSize::SIZE_RM));
-        $image->resizeCanvas(300, 300, 'center');
-        $image->save($picture->getFileName(PictureSize::SIZE_SM));
-
-        $image->resize(200, 150);
-        $image->save($picture->getFileName(PictureSize::SIZE_RS));
-        $image->resizeCanvas(150, 150, 'center');
-        $image->save($picture->getFileName(PictureSize::SIZE_SS));
-
+        foreach (config('packet.thumbs') as $thumbConfig) {
+            $thumb = new Thumbnail(
+                $image,
+                $thumbConfig['width'],
+                $thumbConfig['height'],
+                $picture->getFileNameBySuffix($thumbConfig['suffix']),
+                $thumbConfig['crop']
+            );
+            $thumb->save();
+        }
         return $picture;
+    }
+
+    public function createAndStoreThumbnail(int $width, int $height, bool $ratio, string $fileName)
+    {
     }
 
     public function update(File $file, Request $request): File
