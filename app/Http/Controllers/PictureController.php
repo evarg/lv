@@ -36,7 +36,11 @@ class PictureController extends Controller
      */
     public function store(PictureStoreRequest $request, PictureService $pictureService)
     {
-        $picture = $pictureService->store($request);
+        $pictureService->setRequest($request);
+        $picture = $pictureService->storeOne($request);
+        if(!$picture)
+            return new JsonResponse(['message' => $pictureService->getErrorMessage()], 500);
+
         return $picture;
 
     }

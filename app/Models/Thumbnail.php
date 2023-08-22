@@ -15,25 +15,22 @@ class Thumbnail
     private $crop;
     private $name;
 
-    public function __construct($image, $width, $height, $name, $crop) {
-        $this->image = $image;
-        $this->width = $width;
-        $this->height = $height;
-        $this->crop = $crop;
-        $this->name = $name;
+    public function __construct($image, $thumbConfig) {
+        $this->image = $thumbConfig['image'];
+        $this->width = $thumbConfig['width'];
+        $this->height = $thumbConfig['height'];
+        $this->crop = $thumbConfig['crop'];
+        $this->name = $thumbConfig['name'];
     }
 
     public function save()
     {
         $this->image->resize(1600, 1200, function ($constraint) {
-            $constraint->upsize();
+            if($this->crop) $constraint->upsize();
         });
         $this->image->save($this->name);
 
     }
 
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class);
-    }
+    public static function getName($fileName, $filePattern){}
 }

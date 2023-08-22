@@ -6,19 +6,43 @@ use App\Models\Enums\PictureSize;
 use App\Models\File;
 use App\Models\Picture;
 use App\Models\Thumbnail;
+use App\Interfaces\ErrorMessageInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as ImageManager;
+use RuntimeException;
 
-class PictureService
+class PictureService implements ErrorMessageInterface
 {
     protected $user;
+    protected $request;
+    protected string $errorMessage = '';
+    protected \Illuminate\Filesystem\FilesystemAdapter $storage;
+    protected string $folder;
+    protected $thumbnailsAvaiable;
 
     public function __construct()
     {
         $this->user = Auth::user();
+        $this->storage = $this->getStorage();
+        $this->folder = 'images';
+    }
+
+    public function getErrorMessage(): string
+    {
+        return $this->errorMessage;
+    }
+
+    public function setErrorMessage(string $message): void
+    {
+        $this->errorMessage = $message;
+    }
+
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
     }
 
     public function createAndStoreThumbnails()
@@ -28,15 +52,35 @@ class PictureService
         }
     }
 
-    public function store(Request $request): Picture
+    protected function getStorage(): \Illuminate\Filesystem\FilesystemAdapter
     {
-        $fileUpload = $request->file('picture');
-        $fileName = Storage::putFile('uploads', $fileUpload);
+        return Storage::disk('public');
+    }
 
-        $pictureName = Str::uuid();
+    protected function saveOrginal($request)
+    {
+    }
 
-        $image = ImageManager::make(Storage::disk('local')->path($fileName));
-        $picture = new Picture($request->all());
+    private function storeUploadFile($fileUpload): ?array
+    {
+        try {
+            $fileName = $this->storage->putFile($this->folder, $fileUpload);
+            return [
+                'fileName' => $fileName,
+                'orginalName' => $fileUpload->getClientOriginalName(),
+                'mimeType' => $fileUpload->getClientMimeType(),
+                'size' => $fileUpload->getSize(),
+            ];
+        } catch (RuntimeException $e) {
+            $this->setErrorMessage($e->getMessage());
+            return null;
+        }
+    }
+
+    private function createDbRecord(array $file): ?Picture
+    {
+        $image = ImageManager::make($this->getStorage()->path($fileName));
+        $picture = new Picture($this->request->all());
         $picture->size = $fileUpload->getSize();
         $picture->orginal_name = $fileUpload->getClientOriginalName();
         $picture->hash_name = $pictureName;
@@ -45,26 +89,68 @@ class PictureService
         $picture->height = $image->width();
         $picture->creator()->associate(Auth::user());
         $picture->save();
+        return $picture;
+    }
 
-        var_dump($fileName);
-        var_dump($picture->getFileNameBySizeEnum());
+    private function thumbnailFileName(string $pictureFileName, PictureSize $pictureSize, bool $absolutePath = false): string
+    {
+        $pattern = config('packet.thumbs.' . $pictureSize . '.file_name');
+
+        return
+            sprintf($pattern, pathinfo($pictureFileName, PATHINFO_FILENAME), pathinfo($fileName, PATHINFO_EXTENSION));
+    }
+
+    private function thumbnailFileNameWithPath(string $pattern, string $fileName): string
+    {
+        return
+            $this->getStorage()->path($this->folder) .
+            DIRECTORY_SEPARATOR .
+            sprintf($pattern, pathinfo($fileName, PATHINFO_FILENAME), pathinfo($fileName, PATHINFO_EXTENSION));
+    }
+
+    private function createThumbnails(string $fileName)
+    {
+        foreach (config('packet.thumbs_avaiable') as $thumb) {
+            $image = ImageManager::make($this->storage->path($fileName));
+            $thumbConfig = config('packet.thumbs.' . $thumb);
+            $image->resize($thumbConfig['width'], $thumbConfig['height'], function ($constraint) use ($thumbConfig) {
+                if ($thumbConfig['crop']) $constraint->upsize();
+            });
+            $image->save($this->thumbnailFileNameWithPath($thumbConfig['file_name'], $fileName));
+        }
+    }
+
+    public function storeOne()
+    {
+        $uploadedFile = $this->storeUploadFile($this->request->file('picture'));
+        if (!$uploadedFile)
+            return null;
+
+        $createdTuhumbnails = $this->createThumbnails($uploadedFile['fileName']);
+        if (!$createdTuhumbnails)
+            return null;
+
+        $picture = $this->createDbRecord($uploadedFile);
+
+        // $this->storeUploadFile($fileName);
+
+        //var_dump($uploadedFile);
+        //var_dump($picture->getFileNameBySizeEnum());
 
         //Debugbar::error('Error!');
 
-        Storage::move($fileName, $picture->getFileNameBySizeEnum());
+        // $image = ImageManager::make(Storage::disk('public')->path($fileName));
 
-        $image = ImageManager::make(Storage::disk('local')->path($fileName));
-
-        foreach (config('packet.thumbs') as $thumbConfig) {
-            $thumb = new Thumbnail(
-                $image,
-                $thumbConfig['width'],
-                $thumbConfig['height'],
-                $picture->getFileNameBySuffix($thumbConfig['suffix']),
-                $thumbConfig['crop']
-            );
-            $thumb->save();
-        }
+        // foreach (config('packet.thumbs') as $thumbConfig) {
+        //     $thumb = new Thumbnail(
+        //         $image,
+        //         $thumbConfig['width'],
+        //         $thumbConfig['height'],
+        //         $picture->getFileNameBySuffix($thumbConfig['suffix']),
+        //         $thumbConfig['crop']
+        //     );
+        //     $thumb->save();
+        // }
         return $picture;
     }
 

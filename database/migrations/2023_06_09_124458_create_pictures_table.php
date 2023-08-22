@@ -25,6 +25,8 @@ return new class extends Migration
                 $table->string('mime_type');
                 $table->foreignId('creator_id')->references('id')->on('users')
                     ->onDelete('cascade')->onUpdate('cascade');
+                $table->foreignId('orginal_picture_id')->references('id')->on('pictures')
+                    ->onDelete('cascade')->onUpdate('cascade');
                 $table->timestamps();
             }
         );

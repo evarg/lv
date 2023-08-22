@@ -20,9 +20,11 @@ class Picture extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getPattern($withPath = true)
+    public function getPattern($withPath = false)
     {
-        $pattern = Storage::disk('public')->path('images\\' . $this->hash_name . '%s.jpg');
+        $pattern = 'images' . DIRECTORY_SEPARATOR . $this->hash_name . '-%s.jpg';
+        if($withPath)
+            $pattern = Storage::disk('public')->path($pattern);
 
         return $pattern;
     }
