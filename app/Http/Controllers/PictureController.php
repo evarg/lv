@@ -28,6 +28,7 @@ class PictureController extends Controller
     public function show(Picture $image)
     {
         $image->load('file.creator');
+        $image->load('thumbnails');
         return new JsonResponse($image, 200);
     }
 

@@ -20,6 +20,10 @@ class Picture extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function thumbnails(){
+        return ['thumbnalis' => 'lalala'];
+    }
+
     public function getPattern($withPath = false)
     {
         $pattern = 'images' . DIRECTORY_SEPARATOR . $this->hash_name . '-%s.jpg';

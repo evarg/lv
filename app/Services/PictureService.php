@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as ImageManager;
 use RuntimeException;
 
+use function PHPSTORM_META\type;
+
 class PictureService implements ErrorMessageInterface
 {
     protected $user;
@@ -79,12 +81,12 @@ class PictureService implements ErrorMessageInterface
 
     private function createDbRecord(array $file): ?Picture
     {
-        $image = ImageManager::make($this->getStorage()->path($fileName));
+        $image = ImageManager::make($this->getStorage()->path($file['fileName']));
         $picture = new Picture($this->request->all());
-        $picture->size = $fileUpload->getSize();
-        $picture->orginal_name = $fileUpload->getClientOriginalName();
-        $picture->hash_name = $pictureName;
-        $picture->mime_type = $fileUpload->getClientMimeType();
+        $picture->size = $file['size'];
+        $picture->orginal_name = $file['orginalName'];
+        $picture->hash_name = 'hasshh';
+        $picture->mime_type = $file['mimeType'];
         $picture->width = $image->height();
         $picture->height = $image->width();
         $picture->creator()->associate(Auth::user());
@@ -118,6 +120,7 @@ class PictureService implements ErrorMessageInterface
             });
             $image->save($this->thumbnailFileNameWithPath($thumbConfig['file_name'], $fileName));
         }
+        return true;
     }
 
     public function storeOne()
@@ -132,25 +135,6 @@ class PictureService implements ErrorMessageInterface
 
         $picture = $this->createDbRecord($uploadedFile);
 
-        // $this->storeUploadFile($fileName);
-
-        //var_dump($uploadedFile);
-        //var_dump($picture->getFileNameBySizeEnum());
-
-        //Debugbar::error('Error!');
-
-        // $image = ImageManager::make(Storage::disk('public')->path($fileName));
-
-        // foreach (config('packet.thumbs') as $thumbConfig) {
-        //     $thumb = new Thumbnail(
-        //         $image,
-        //         $thumbConfig['width'],
-        //         $thumbConfig['height'],
-        //         $picture->getFileNameBySuffix($thumbConfig['suffix']),
-        //         $thumbConfig['crop']
-        //     );
-        //     $thumb->save();
-        // }
         return $picture;
     }
 

@@ -18,7 +18,7 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return new JsonResponse(['message' => __('auth.failed')]);
+            return new JsonResponse(['message' => __('auth.failed')], 401);
         }
 
         $token = auth()->user()->createToken('API Token')->accessToken;
