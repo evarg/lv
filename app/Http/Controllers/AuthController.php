@@ -18,7 +18,7 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return new JsonResponse(['message' => __('auth.failed')]);
+            return new JsonResponse(['message' => __('auth.failed')], 401);
         }
 
         $token = auth()->user()->createToken('API Token')->accessToken;
@@ -32,5 +32,4 @@ class AuthController extends Controller
         $user->revoke();
         return new JsonResponse(['message' => __('auth.logout')], 201);
     }
-
 }

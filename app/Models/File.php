@@ -9,9 +9,16 @@ class File extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'name' => 'Plik',
+    ];
+
+    protected $fillable = [
+        'name'
+    ];
+
     public function creator()
     {
         return $this->belongsTo(User::class);
     }
-
 }

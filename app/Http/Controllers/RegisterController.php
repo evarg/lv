@@ -14,7 +14,6 @@ class RegisterController extends Controller
     public function store(RegisterRequest $request)
     {
         $user = User::create($request->validated());
-        Auth::login($user);
         return new JsonResponse(['message' => __('auth.register')], 201);
     }
 }

@@ -18,7 +18,7 @@ class ProducerController extends Controller
         $producers = Producer::all();
         return new JsonResponse($producers);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      */
