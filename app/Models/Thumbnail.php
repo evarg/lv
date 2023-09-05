@@ -15,7 +15,8 @@ class Thumbnail
     private $crop;
     private $name;
 
-    public function __construct($image, $thumbConfig) {
+    public function __construct($image, $thumbConfig)
+    {
         $this->image = $thumbConfig['image'];
         $this->width = $thumbConfig['width'];
         $this->height = $thumbConfig['height'];
@@ -26,11 +27,14 @@ class Thumbnail
     public function save()
     {
         $this->image->resize(1600, 1200, function ($constraint) {
-            if($this->crop) $constraint->upsize();
+            if ($this->crop) {
+                $constraint->upsize();
+            }
         });
         $this->image->save($this->name);
-
     }
 
-    public static function getName($fileName, $filePattern){}
+    public static function getName($fileName, $filePattern)
+    {
+    }
 }

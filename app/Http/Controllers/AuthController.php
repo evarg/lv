@@ -32,5 +32,4 @@ class AuthController extends Controller
         $user->revoke();
         return new JsonResponse(['message' => __('auth.logout')], 201);
     }
-
 }

@@ -39,7 +39,7 @@ class FileService
     {
         $file->fill($request->all());
         $fileUpload = $request->file('file');
-        if($fileUpload){
+        if ($fileUpload) {
             if (Storage::exists($file->hash_name)) {
                 Storage::delete($file->hash_name);
             }

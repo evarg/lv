@@ -16,119 +16,60 @@ class AuthControllerTest extends TestCase
 
     public function testLogin_withoutData(): void
     {
-        // Arrange
-        //   1. utworzenie użytkownika
-        $userEmail = 'useremail@example.com';
-        $userPassword = 'testpassword';
-
-        $user = User::factory()->create(
-            [
-                'email' => $userEmail,
-                'password' => $userPassword,
-            ]
-        );
-
-        // Act
         $response = $this->postJson('/api/auth');
-
-        // Asset
         $response->assertStatus(422);
     }
 
     public function testLogin_withoutPassword(): void
     {
-        // Arrange
-        //   1. utworzenie użytkownika
-        $userEmail = 'useremail@example.com';
-        $userPassword = 'testpassword';
-
-        $user = User::factory()->create(
-            [
-                'email' => $userEmail,
-                'password' => $userPassword,
-            ]
-        );
+        $this->createUser();
         $credencials = [
-            'email' => $userEmail,
+            'email' => $this->userEmail,
         ];
-
-        // Act
         $response = $this->postJson('/api/auth', $credencials);
-
-        // Asset
         $response->assertStatus(422);
     }
 
     public function testLogin_withoutEmail(): void
     {
-        // Arrange
-        //   1. utworzenie użytkownika
-        $userEmail = 'useremail@example.com';
-        $userPassword = 'testpassword';
-
-        $user = User::factory()->create(
-            [
-                'email' => $userEmail,
-                'password' => $userPassword,
-            ]
-        );
+        $this->createUser();
         $credencials = [
-            'password' => $userPassword,
+            'password' => $this->userPassword,
         ];
-
-        // Act
         $response = $this->postJson('/api/auth', $credencials);
-
-        // Asset
         $response->assertStatus(422);
     }
 
     public function testLogin_withInvalidPassword(): void
     {
-        // Arrange
-        $userEmail = 'useremail@example.com';
-        $userPassword = 'testpassword';
-
-        $user = User::factory()->create(
-            [
-                'email' => $userEmail,
-                'password' => $userPassword,
-            ]
-        );
+        $this->createUser();
         $credencials = [
-            'email' => $userEmail,
+            'email' => $this->userEmail,
             'password' => '1234asdfasdcx',
         ];
-
-        // Act
         $response = $this->postJson('/api/auth', $credencials);
-
-        // Asset
         $response->assertStatus(401);
     }
 
-    public function testLogin_withValidCredencials(): void
+    public function testLogin_withValidCredencialsAndEmailIsNotVerified(): void
     {
-        // Arrange
-
-        $userEmail = 'useremail@example.com';
-        $userPassword = 'testpassword';
-
-        $user = User::factory()->create(
-            [
-                'email' => $userEmail,
-                'password' => $userPassword,
-            ]
-        );
+        $this->createUser();
         $credencials = [
-            'email' => $userEmail,
-            'password' => $userPassword,
+            'email' => $this->userEmail,
+            'password' => $this->userPassword,
         ];
-
-        // Act
         $response = $this->postJson('/api/auth', $credencials);
+        $response->assertStatus(403);
+    }
 
-        // Asset
+    public function testLogin_withValidCredencialsAndEmailIsVerified(): void
+    {
+        $this->createUser(true);
+        $credencials = [
+            'email' => $this->userEmail,
+            'password' => $this->userPassword,
+        ];
+        $response = $this->postJson('/api/auth', $credencials);
         $response->assertStatus(200);
     }
 }

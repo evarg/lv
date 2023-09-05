@@ -20,27 +20,28 @@ class Picture extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function thumbnails(){
+    public function thumbnails()
+    {
         return ['thumbnalis' => 'lalala'];
     }
 
     public function getPattern($withPath = false)
     {
         $pattern = 'images' . DIRECTORY_SEPARATOR . $this->hash_name . '-%s.jpg';
-        if($withPath)
+        if ($withPath) {
             $pattern = Storage::disk('public')->path($pattern);
+        }
 
         return $pattern;
     }
 
     public function getFileNameBySizeEnum($pictureSize = PictureSize::SIZE_ORG)
     {
-        return sprintf($this->getPattern(), config('picture.thumbs'.$pictureSize.'suffix'));
+        return sprintf($this->getPattern(), config('picture.thumbs' . $pictureSize . 'suffix'));
     }
 
     public function getFileNameBySuffix(string $fileNameSuffix)
     {
         return sprintf($this->getPattern(), $fileNameSuffix);
     }
-
 }

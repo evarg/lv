@@ -39,11 +39,11 @@ class PictureController extends Controller
     {
         $pictureService->setRequest($request);
         $picture = $pictureService->storeOne($request);
-        if(!$picture)
+        if (!$picture) {
             return new JsonResponse(['message' => $pictureService->getErrorMessage()], 500);
+        }
 
         return $picture;
-
     }
 
     /**

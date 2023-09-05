@@ -43,7 +43,7 @@ class FileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(FileUpdateRequest $request, File $file, FileService $fileService) : JsonResponse
+    public function update(FileUpdateRequest $request, File $file, FileService $fileService): JsonResponse
     {
         $file = $fileService->update($file, $request);
         return new JsonResponse($file);

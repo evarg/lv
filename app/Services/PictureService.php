@@ -116,7 +116,9 @@ class PictureService implements ErrorMessageInterface
             $image = ImageManager::make($this->storage->path($fileName));
             $thumbConfig = config('packet.thumbs.' . $thumb);
             $image->resize($thumbConfig['width'], $thumbConfig['height'], function ($constraint) use ($thumbConfig) {
-                if ($thumbConfig['crop']) $constraint->upsize();
+                if ($thumbConfig['crop']) {
+                    $constraint->upsize();
+                }
             });
             $image->save($this->thumbnailFileNameWithPath($thumbConfig['file_name'], $fileName));
         }
@@ -126,12 +128,14 @@ class PictureService implements ErrorMessageInterface
     public function storeOne()
     {
         $uploadedFile = $this->storeUploadFile($this->request->file('picture'));
-        if (!$uploadedFile)
+        if (!$uploadedFile) {
             return null;
+        }
 
         $createdTuhumbnails = $this->createThumbnails($uploadedFile['fileName']);
-        if (!$createdTuhumbnails)
+        if (!$createdTuhumbnails) {
             return null;
+        }
 
         $picture = $this->createDbRecord($uploadedFile);
 
